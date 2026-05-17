@@ -1,0 +1,52 @@
+# push / PR 時に lint・型チェック・テスト・ビルド・サイズ計測を自動実行する
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      # リポジトリのチェックアウト
+      - uses: actions/checkout@v4
+
+      # pnpm をインストール（version は package.json の packageManager と合わせる）
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      # Node.js セットアップ。pnpm キャッシュも有効化
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      # ロックファイル通りに依存をインストール（pnpm-lock.yaml と差異があれば失敗）
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Biome で format + lint + organize imports をチェック（--write なし）
+      - name: Biome check (format + lint)
+        run: pnpm biome check .
+
+      # TypeScript の型チェック（コンパイルは行わない）
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # Vitest でテスト実行
+      - name: Test
+        run: pnpm test
+
+      # tsc で dist/ を生成（型定義付き）
+      - name: Build
+        run: pnpm build
+
+      # esbuild で minify バンドル → gzip/brotli サイズを計測（増減の可視化用）
+      - name: Bundle size check
+        run: pnpm size

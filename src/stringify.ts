@@ -1,4 +1,4 @@
-import type { StringifyOptions } from './types'
+import type { StringifyOptions } from './types.js'
 
 /** UTF-8 BOM */
 const BOM = '﻿'

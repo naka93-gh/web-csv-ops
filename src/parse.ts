@@ -1,4 +1,4 @@
-import type { CSVError, ParseOptions, Result } from './types'
+import type { CSVError, ParseOptions, Result } from './types.js'
 
 const BOM = '﻿'
 

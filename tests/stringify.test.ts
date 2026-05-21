@@ -105,6 +105,28 @@ describe('stringify', () => {
     it('boolean を文字列に変換する', () => {
       expect(stringify([{ a: true, b: false }], { bom: false })).toBe('a,b\r\ntrue,false')
     })
+
+    it('Date を ISO 8601 文字列に変換する', () => {
+      // ロケール依存の Date.toString() ではなく ISO 形式で出力
+      expect(stringify([{ d: new Date('2026-05-22T00:00:00.000Z') }], { bom: false })).toBe(
+        'd\r\n2026-05-22T00:00:00.000Z',
+      )
+    })
+
+    it('Invalid Date は空文字列にする', () => {
+      // toISOString() が例外を投げるため空文字にフォールバック
+      expect(stringify([{ d: new Date('invalid') }], { bom: false })).toBe('d\r\n')
+    })
+
+    it('オブジェクトを JSON 文字列に変換する', () => {
+      // [object Object] ではなく JSON 化（" を含むため引用符で囲まれ、内部の " は "" にエスケープ）
+      expect(stringify([{ o: { a: 1 } }], { bom: false })).toBe('o\r\n"{""a"":1}"')
+    })
+
+    it('配列を JSON 文字列に変換する', () => {
+      // 配列の暗黙 toString（カンマ区切り）ではなく JSON 化
+      expect(stringify([{ a: [1, 2] }], { bom: false })).toBe('a\r\n"[1,2]"')
+    })
   })
 
   // 配列要素に null/undefined が混入しても例外を投げず、空行として出力することを担保
@@ -169,6 +191,16 @@ describe('stringify', () => {
       // -100 (number) を "'-100" にすると Excel で数値として扱われなくなるため、
       // サニタイズ対象は文字列型に限定する
       expect(stringify([{ a: -100 }], { bom: false })).toBe('a\r\n-100')
+    })
+
+    it('タブで始まる文字列もサニタイズ', () => {
+      // 先頭タブも Excel で数式トリガーになりうるため対象
+      expect(stringify([{ a: '\t=1+1' }], { bom: false })).toBe("a\r\n'\t=1+1")
+    })
+
+    it('復帰(CR)で始まる文字列もサニタイズ', () => {
+      // 先頭 CR をサニタイズ。CR を含むため引用符でも囲まれる
+      expect(stringify([{ a: '\r=1+1' }], { bom: false })).toBe('a\r\n"\'\r=1+1"')
     })
   })
 })

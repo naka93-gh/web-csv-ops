@@ -2,8 +2,8 @@ import type { StringifyOptions } from './types.js'
 
 /** UTF-8 BOM */
 const BOM = '﻿'
-/** CSV インジェクション対策の対象文字 */
-const FORMULA_PREFIXES = new Set(['=', '+', '-', '@'])
+/** CSV インジェクション対策の対象文字（Excel が数式として解釈しうる先頭文字。タブ・復帰を含む） */
+const FORMULA_PREFIXES = new Set(['=', '+', '-', '@', '\t', '\r'])
 
 /**
  * オブジェクト配列をCSV文字列にシリアライズする
@@ -115,8 +115,11 @@ function stringifyValue(value: unknown): string {
   if (value === null || value === undefined) return ''
   // 値が文字列ならそのまま返す
   if (typeof value === 'string') return value
-  // 文字列以外(数値など)は文字列化して返す
-  // TODO: オブジェクトが直接渡されるとCSVが壊れる可能性があるので、防御策を入れてもいいかもしれない
+  // Date は ISO 8601（ロケール非依存）。Invalid Date は toISOString が例外を投げるため空文字にする
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? '' : value.toISOString()
+  // オブジェクト・配列は JSON 文字列化（[object Object] や配列の暗黙 toString を避ける）
+  if (typeof value === 'object') return JSON.stringify(value)
+  // 数値・真偽値・bigint などは文字列化して返す
   return String(value)
 }
 

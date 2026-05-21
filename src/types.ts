@@ -20,6 +20,12 @@ export type CSVError = {
 export type CSVErrorType = 'parse' | 'file-read'
 
 /**
+ * parse / parseFile の結果1行の型
+ * CSV のセルは常に文字列のため、T のキーは保ちつつ値型をすべて string に矯正する
+ */
+export type ParsedRow<T> = { [K in keyof T]: string }
+
+/**
  * パースオプション設定
  */
 export type ParseOptions = {

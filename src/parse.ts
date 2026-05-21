@@ -1,4 +1,4 @@
-import type { CSVError, ParseOptions, Result } from './types.js'
+import type { CSVError, ParsedRow, ParseOptions, Result } from './types.js'
 
 const BOM = '﻿'
 
@@ -16,7 +16,10 @@ const BOM = '﻿'
  * }
  * ```
  */
-export function parse<T>(text: string, options: ParseOptions = {}): Result<T[]> {
+export function parse<T extends object = Record<string, string>>(
+  text: string,
+  options: ParseOptions = {},
+): Result<ParsedRow<T>[]> {
   const { header = true, headers: explicitHeaders, skipEmptyLines = true } = options
 
   // BOM除去
@@ -55,7 +58,10 @@ export function parse<T>(text: string, options: ParseOptions = {}): Result<T[]> 
   }
 
   // オブジェクト配列にパース
-  const data = dataRows.map((row) => Object.fromEntries(keys.map((k, i) => [k, row[i] ?? ''])) as T)
+  // CSV のセルは常に文字列なので値型は string（ParsedRow<T>）
+  const data = dataRows.map(
+    (row) => Object.fromEntries(keys.map((k, i) => [k, row[i] ?? ''])) as ParsedRow<T>,
+  )
   return { ok: true, data }
 }
 
@@ -73,7 +79,10 @@ export function parse<T>(text: string, options: ParseOptions = {}): Result<T[]> 
  * }
  * ```
  */
-export async function parseFile<T>(file: File, options?: ParseOptions): Promise<Result<T[]>> {
+export async function parseFile<T extends object = Record<string, string>>(
+  file: File,
+  options?: ParseOptions,
+): Promise<Result<ParsedRow<T>[]>> {
   try {
     const text = await file.text()
     return parse<T>(text, options)

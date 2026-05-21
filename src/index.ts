@@ -3,6 +3,7 @@ export { downloadCSV, stringify } from './stringify.js'
 export type {
   CSVError,
   CSVErrorType,
+  ParsedRow,
   ParseOptions,
   Result,
   StringifyOptions,

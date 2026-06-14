@@ -4,9 +4,9 @@
   "description": "Parse and stringify CSV in the browser or Node.js. Zero dependencies.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/naka93-gh/web-csv.git"
+    "url": "git+https://github.com/naka93-gh/web-csv-ops.git"
   },
-  "bugs": "https://github.com/naka93-gh/web-csv/issues",
+  "bugs": "https://github.com/naka93-gh/web-csv-ops/issues",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

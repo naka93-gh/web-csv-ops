@@ -6,6 +6,22 @@
 import { parseIsoDate } from './date.js'
 import type { ColumnType, RowError, Schema } from './types.js'
 
+/**
+ * スキーマを定義する（リテラル型を保持して `InferRow` の型付けを効かせる）
+ *
+ * @example
+ * ```ts
+ * const schema = defineSchema({
+ *   名前: { prop: 'name', type: 'string', required: true },
+ *   年齢: { prop: 'age', type: 'number' },
+ * })
+ * // parse(text, { schema }).data: { name: string; age: number | null }[]
+ * ```
+ */
+export function defineSchema<const S extends Schema>(schema: S): S {
+  return schema
+}
+
 /** schema 適用後の値（型付き） */
 type Typed = string | number | boolean | Date | null
 

@@ -2,6 +2,7 @@
 
 export { downloadCSV } from './browser/download.js'
 export { parseFile } from './browser/parse-file.js'
+export { defineSchema } from './core/schema.js'
 export type {
   Column,
   ColumnType,

@@ -1,7 +1,12 @@
 {
   "name": "web-csv",
   "version": "0.1.0",
-  "description": "依存ゼロ・型安全なCSVパーサー（ブラウザ向け）",
+  "description": "Parse and stringify CSV in the browser or Node.js. Zero dependencies.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naka93-gh/web-csv.git"
+  },
+  "bugs": "https://github.com/naka93-gh/web-csv/issues",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -13,7 +18,9 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "CHANGELOG.md",
+    "!dist/*.min.js",
+    "!dist/**/*.map"
   ],
   "sideEffects": false,
   "scripts": {
@@ -21,8 +28,10 @@
     "build": "tsc -p tsconfig.build.json",
     "build:min": "esbuild src/index.ts --bundle --minify --format=esm --target=es2020 --outfile=dist/index.min.js",
     "size": "pnpm build:min && printf 'min: %s B / gzip: %s B\\n' $(wc -c < dist/index.min.js) $(gzip -c dist/index.min.js | wc -c)",
+    "size:check": "node scripts/size.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:dist": "pnpm build && node scripts/smoke.mjs",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "format": "biome format --write .",
@@ -50,5 +59,10 @@
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=22"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

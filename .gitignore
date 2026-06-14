@@ -5,3 +5,6 @@ coverage/
 .DS_Store
 .vscode/
 .idea/
+
+# ローカル限定 開発用ドキュメント
+local-docs/

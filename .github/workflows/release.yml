@@ -1,0 +1,33 @@
+name: Release
+
+# v* タグの push で GitHub Release を作る。リリースノートは CHANGELOG.md の該当節を流用する。
+# npm への publish は手元で行うため、ここでは Release 作成のみ。
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: CHANGELOG から Release を作成
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          # "## <version>" の節を次の "## " 見出しまで抜き出す
+          notes="$(awk -v h="## ${version}" '
+            $0 == h { f = 1; next }
+            /^## / && f { f = 0 }
+            f { print }
+          ' CHANGELOG.md)"
+          if [ -z "$(printf '%s' "$notes" | tr -d '[:space:]')" ]; then
+            echo "CHANGELOG に ${version} の節が無いため自動生成ノートで作成"
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes
+          else
+            gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "$notes"
+          fi

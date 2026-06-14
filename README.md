@@ -77,7 +77,6 @@ if (result.ok) {
 
 - 値の型は `type`（`string` / `number` / `boolean` / `date`）で決まる。`type: "string"` は恒等変換で先頭ゼロ（郵便番号など）を保つ
 - `required` 未入力・型変換失敗・`validate` の NG は **その行だけ** `errors` に落ち、`data` には残らない
-- schema は web-xlsx と共有（同じ schema を xlsx 取込にも使える）
 
 ### parseFile
 
@@ -162,7 +161,7 @@ downloadCSV(users, "users.csv", { headers: ["id", "name", "email"] });
 
 - parse: schema 無しの値は常に文字列。型付けは `schema` 経由で行う
 - parse: schema 無しでヘッダーに同名の列があると後勝ちで上書きされる（schema 経路は `duplicate-header` で拒否）
-- parse: `InferRow` の型付けは現状 tsc 6.0.3 の制約で静的に全列 union に潰れる（runtime は正しい。web-xlsx と同じ）
+- parse: `InferRow` の型付けは現状 tsc 6.0.3 の制約で静的に全列 union に潰れる（runtime は正しい）
 - stringify: ネストした値（オブジェクト・配列）は JSON 文字列化する
 - stringify: `Date` は ISO 8601（ロケール非依存）で出力する
 

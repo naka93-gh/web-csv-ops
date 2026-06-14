@@ -148,11 +148,10 @@ type PropValue<C extends Column> = C extends { required: true }
 /**
  * スキーマから行の型を推論する
  *
- * `prop` をキー、`type` を値の型にマップする（`required: true` でない列は `null` 許容）。
- * web-xlsx と同一定義（[ADR 0001]）でパリティを保つ
+ * `prop` をキー、`type` を値の型にマップする（`required: true` でない列は `null` 許容）
  *
  * NOTE: tsc 6.0.3 では `[K in keyof S as S[K]['prop']]` のキー再割り当てで `S[K]` の
- * K 対応が失われ、値が全列型の union に潰れる既知制約がある（web-xlsx も同様）。
+ * K 対応が失われ、値が全列型の union に潰れる既知制約がある。
  * runtime は正しく型付けされる。tsc 更新時に解消見込み
  *
  * @example

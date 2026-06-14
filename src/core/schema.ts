@@ -1,7 +1,7 @@
 // スキーマ検証・型付け（CSV データ行 → 型付き行 ＋ 行エラー）
 //
-// CSV のセルは常に文字列なので、web-xlsx の coerce から native 型（number/Date セル）の
-// 分岐が消え、文字列入力だけを扱う。受理規則（10進数値・true/1・ISO 日付）は web-xlsx と揃える
+// CSV のセルは常に文字列なので、文字列入力だけを列型へ強制する。
+// 受理規則: 10進数値のみ number / true・1・false・0 を boolean / ISO 8601 を date
 
 import { parseIsoDate } from './date.js'
 import type { ColumnType, RowError, Schema } from './types.js'

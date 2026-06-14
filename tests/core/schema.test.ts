@@ -3,7 +3,7 @@ import { parse } from '../../src/core/parse'
 import type { Schema } from '../../src/core/types'
 
 // schema を渡した高レベル経路（検証＋型付け）の挙動を担保する。
-// 受理規則（10進数値・true/1・ISO 日付・先頭ゼロ保持）は web-xlsx と揃える方針
+// 受理規則: 10進数値・true/1・ISO 日付・先頭ゼロ保持
 
 const schema = {
   名前: { prop: 'name', type: 'string', required: true },
@@ -173,9 +173,8 @@ describe('parse（schema）', () => {
     })
   })
 
-  describe('golden（web-xlsx パリティ）', () => {
-    // 同一入力・同一 schema に対する期待出力を固定し、coerce のドリフトを検知する。
-    // 値・行エラーは web-xlsx の coerce/applySchema と同じ結果になる
+  describe('golden（coerce 挙動の固定）', () => {
+    // 同一入力・同一 schema に対する期待出力を固定し、coerce のドリフトを検知する
     it('混在データ（有効行は data、NG 行は errors）', () => {
       const text = '名前,年齢,入社日\nAlice,30,2020-01-15\nBob,xx,2021-02-01\nCarol,25,bad-date'
       const s = {
